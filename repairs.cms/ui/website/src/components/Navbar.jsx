@@ -7,6 +7,7 @@ import {
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 import { cn } from "@/lib/utils"
+import { NavLink } from 'react-router'
 
 const Navbar = () => {
     return (
@@ -14,28 +15,28 @@ const Navbar = () => {
             <NavigationMenu className="rounded-full border border-border/40 bg-background/60 backdrop-blur-xl shadow-sm">
                 <NavigationMenuList className="px-2 py-1">
                     <NavigationMenuItem>
-                        <NavigationMenuLink
-                            href="/"
+                        <NavLink
+                            to="/"
                             className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-accent/50 data-[active]:bg-accent/50 rounded-full")}
                         >
                             Home
-                        </NavigationMenuLink>
+                        </NavLink>
                     </NavigationMenuItem>
                     <NavigationMenuItem>
-                        <NavigationMenuLink
-                            href="/about"
+                        <NavLink
+                            to="/about"
                             className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-accent/50 data-[active]:bg-accent/50 rounded-full")}
                         >
                             About
-                        </NavigationMenuLink>
+                        </NavLink>
                     </NavigationMenuItem>
                     <NavigationMenuItem>
-                        <NavigationMenuLink
-                            href="/contact"
+                        <NavLink
+                            to="/contact"
                             className={cn(navigationMenuTriggerStyle(), "bg-transparent hover:bg-accent/50 data-[active]:bg-accent/50 rounded-full")}
                         >
                             Contact
-                        </NavigationMenuLink>
+                        </NavLink>
                     </NavigationMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>

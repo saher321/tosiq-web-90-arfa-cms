@@ -1,16 +1,18 @@
 import React from 'react'
-import { Button } from "@/components/ui/button"
-import Navbar from "@/components/Navbar"
+import { BrowserRouter, Routes, Route } from "react-router"
+import Home from "@/pages/Home"
+import About from "@/pages/About"
+import Contact from "@/pages/Contact"
 
 const App = () => {
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
-      <Navbar />
-      <div className="pt-32 px-4 flex flex-col items-center gap-4">
-        <h1 className="text-4xl font-bold tracking-tight">Welcome to Website</h1>
-        <Button>Button</Button>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
