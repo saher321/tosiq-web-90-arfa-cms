@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import {
     LayoutDashboard,
+    LayoutTemplate,
     Home,
     Info,
     Phone,
@@ -14,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const navItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
+    { name: 'Webpages', path: '/webpages', icon: LayoutTemplate },
     { name: 'Home', path: '/home', icon: Home },
     { name: 'About', path: '/about', icon: Info },
     { name: 'Contact', path: '/contact', icon: Phone },
