@@ -21,6 +21,7 @@ import {
     CheckCircle
 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Link } from 'react-router'
 
 const Home = () => {
     const heroSlides = [
@@ -114,9 +115,9 @@ const Home = () => {
                                         <p className="text-lg md:text-2xl max-w-2xl animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
                                             {slide.subtitle}
                                         </p>
-                                        <Button size="lg" className="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300 text-lg px-8">
+                                        <Link to="/contact" className="bg-gray-800 text-white animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300 text-lg px-8">
                                             Book Now
-                                        </Button>
+                                        </Link>
                                     </div>
                                 </CarouselItem>
                             ))}
@@ -237,9 +238,9 @@ const Home = () => {
                                 </div>
                             </div>
                             <div className="flex flex-col gap-4 w-full md:w-auto">
-                                <Button size="xl" variant="secondary" className="text-lg px-8 py-6 h-auto font-bold shadow-lg hover:shadow-xl transition-all">
+                                <Link to="/contact" size="xl" className="bg-white text-gray-800 text-lg px-8 py-6 h-auto font-bold shadow-lg hover:shadow-xl transition-all">
                                     Book Appointment
-                                </Button>
+                                </Link>
                                 <p className="text-center text-sm opacity-90">
                                     Or call us: <span className="font-bold">(555) 123-4567</span>
                                 </p>
