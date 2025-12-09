@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Home, Info, Phone, ArrowRight, Plus, Pencil, Trash2, FileText, Globe } from 'lucide-react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from '@/components/ui/checkbox';
 
 export default function Webpages() {
     const pages = [
@@ -50,8 +51,8 @@ export default function Webpages() {
     ];
 
     const [dynamicPages, setDynamicPages] = useState([
-        { id: 1, title: 'Services', slug: 'services', status: 'Published', content: '<p>Our services include...</p>' },
-        { id: 2, title: 'FAQ', slug: 'faq', status: 'Draft', content: '<p>Frequently Asked Questions</p>' },
+        { id: 1, title: 'Services', slug: 'services', status: true, content: '<p>Our services include...</p>' },
+        { id: 2, title: 'FAQ', slug: 'faq', status: false, content: '<p>Frequently Asked Questions</p>' },
     ]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(null);
@@ -64,7 +65,7 @@ export default function Webpages() {
             id: currentPage ? currentPage.id : Date.now(),
             title: formData.get('title'),
             slug: formData.get('slug'),
-            status: 'Draft', // Default status
+            status: false, // Default status
             content: editorContent,
         };
 
@@ -171,11 +172,11 @@ export default function Webpages() {
                                             </div>
                                         </TableCell>
                                         <TableCell>
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${page.status === 'Published'
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${page.status === true
                                                 ? 'bg-green-100 text-green-800'
                                                 : 'bg-yellow-100 text-yellow-800'
                                                 }`}>
-                                                {page.status}
+                                                {page.status ? 'Published' : 'Draft'}
                                             </span>
                                         </TableCell>
                                         <TableCell className="text-right">
@@ -222,6 +223,13 @@ export default function Webpages() {
                                 <div className="flex items-center gap-2">
                                     <span className="text-muted-foreground text-sm">/</span>
                                     <Input id="slug" name="slug" defaultValue={currentPage?.slug} placeholder="our-services" required />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="status">Status</Label>
+                                <div className="flex items-center gap-3">
+                                    <Checkbox id="terms" />
+                                    <Label htmlFor="terms">Publish webpage now?</Label>
                                 </div>
                             </div>
                         </div>
