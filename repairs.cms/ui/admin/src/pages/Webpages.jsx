@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Home, Info, Phone, ArrowRight, Plus, Pencil, Trash2, FileText, Globe } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
@@ -24,6 +24,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from '@/components/ui/checkbox';
+import { LIST_WEBPAGES } from '@/resources/server_apis';
+import axios from 'axios';
 
 export default function Webpages() {
     const pages = [
@@ -50,14 +52,27 @@ export default function Webpages() {
         }
     ];
 
-    const [dynamicPages, setDynamicPages] = useState([
-        { id: 1, title: 'Services', slug: 'services', status: true, content: '<p>Our services include...</p>' },
-        { id: 2, title: 'FAQ', slug: 'faq', status: false, content: '<p>Frequently Asked Questions</p>' },
-    ]);
+    const [dynamicPages, setDynamicPages] = useState([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(null);
     const [editorContent, setEditorContent] = useState('');
 
+    useEffect(() => {
+        const getWebpages = async () => {
+            try {
+                const response = await axios.get(LIST_WEBPAGES);
+                if (response.data.status == true) {
+                    setDynamicPages(response.data.webpages)
+                } else {
+                    console.log("Axios error")
+                }
+            } catch (error) {
+                console.log("Error: ", error)
+            }   
+        }
+        getWebpages();
+    }, []);
+    
     const handleSave = (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
