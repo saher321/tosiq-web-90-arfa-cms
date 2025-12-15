@@ -24,10 +24,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from '@/components/ui/checkbox';
-import { LIST_WEBPAGES } from '@/resources/server_apis';
+import { LIST_WEBPAGES, CREATE_WEBPAGE, DELETE_WEBPAGE } from '@/resources/server_apis';
 import axios from 'axios';
+import { useForm } from 'react-hook-form';
 
 export default function Webpages() {
+
+    const [dynamicPages, setDynamicPages] = useState([]);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(null);
+    const [editorContent, setEditorContent] = useState('');
+    const { register, handleSubmit } = useForm();
+
     const pages = [
         {
             name: 'Home Page',
@@ -52,35 +60,28 @@ export default function Webpages() {
         }
     ];
 
-    const [dynamicPages, setDynamicPages] = useState([]);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [currentPage, setCurrentPage] = useState(null);
-    const [editorContent, setEditorContent] = useState('');
-
-    useEffect(() => {
-        const getWebpages = async () => {
-            try {
-                const response = await axios.get(LIST_WEBPAGES);
-                if (response.data.status == true) {
-                    setDynamicPages(response.data.webpages)
-                } else {
-                    console.log("Axios error")
-                }
-            } catch (error) {
-                console.log("Error: ", error)
-            }   
+    const getWebpages = async () => {
+        try {
+            const response = await axios.get(LIST_WEBPAGES);
+            if (response.data.status == true) {
+                setDynamicPages(response.data.webpages)
+                console.log(response.data.webpages)
+            } else {
+                console.log("Axios error")
+            }
+        } catch (error) {
+            console.log("Error: ", error)
         }
+    }
+    useEffect(() => {
         getWebpages();
     }, []);
-    
-    const handleSave = (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
+
+    const handleSaveWebpage = async (data) => {
         const newPage = {
-            id: currentPage ? currentPage.id : Date.now(),
-            title: formData.get('title'),
-            slug: formData.get('slug'),
-            status: false, // Default status
+            title: data.title,
+            slug: data.slug,
+            status: data.status,
             content: editorContent,
         };
 
@@ -89,14 +90,33 @@ export default function Webpages() {
         } else {
             setDynamicPages([...dynamicPages, newPage]);
         }
+        try {
+            const response = await axios.post(CREATE_WEBPAGE, newPage);
+            if (response.data.status == true) {
+                getWebpages();
+            } else {
+                console.log("Axios error")
+            }
+        } catch (error) {
+            console.log("Error: ", error)
+        }
         setIsDialogOpen(false);
         setCurrentPage(null);
         setEditorContent('');
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (confirm('Are you sure you want to delete this page?')) {
-            setDynamicPages(dynamicPages.filter(p => p.id !== id));
+            try {
+                const response = await axios.delete(`${DELETE_WEBPAGE}/${id}`);
+                if (response.data.status == true) {
+                    getWebpages();
+                } else {
+                    console.log("Axios error")
+                }
+            } catch (error) {
+                console.log("Error: ", error)
+            }
         }
     };
 
@@ -199,7 +219,7 @@ export default function Webpages() {
                                                 <Button variant="ghost" size="icon" onClick={() => openEdit(page)}>
                                                     <Pencil className="w-4 h-4" />
                                                 </Button>
-                                                <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => handleDelete(page.id)}>
+                                                <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => handleDelete(page._id)}>
                                                     <Trash2 className="w-4 h-4" />
                                                 </Button>
                                             </div>
@@ -227,23 +247,23 @@ export default function Webpages() {
                             {currentPage ? 'Update page details.' : 'Add a new dynamic page to your website.'}
                         </DialogDescription>
                     </DialogHeader>
-                    <form onSubmit={handleSave} className="space-y-4">
+                    <form onSubmit={handleSubmit(handleSaveWebpage)} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="title">Page Title</Label>
-                                <Input id="title" name="title" defaultValue={currentPage?.title} placeholder="e.g. Our Services" required />
+                                <Input id="title" {...register('title')} defaultValue={currentPage?.title} placeholder="e.g. Our Services" required />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="slug">URL Slug</Label>
                                 <div className="flex items-center gap-2">
                                     <span className="text-muted-foreground text-sm">/</span>
-                                    <Input id="slug" name="slug" defaultValue={currentPage?.slug} placeholder="our-services" required />
+                                    <Input id="slug" {...register('slug')} defaultValue={currentPage?.slug} placeholder="our-services" required />
                                 </div>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="status">Status</Label>
                                 <div className="flex items-center gap-3">
-                                    <Checkbox id="terms" />
+                                    <Checkbox {...register('status')} id="terms" />
                                     <Label htmlFor="terms">Publish webpage now?</Label>
                                 </div>
                             </div>

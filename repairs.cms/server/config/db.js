@@ -10,6 +10,6 @@ export const dbConnect = async () => {
         console.log("Failed to connect: ", error);
     });
     
-    await mongoose.connect(process.env.MONGODB_URL_LOCAL);
+    await mongoose.connect(process.env.MONGODB_URL_PROD);
 
 }

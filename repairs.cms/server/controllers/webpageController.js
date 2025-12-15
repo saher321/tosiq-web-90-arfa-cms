@@ -8,7 +8,73 @@ export const listWebpages = async (req, res) => {
         console.log("Error: ", error);
     }
 }
-export const createWebpages = async (req, res) => {}
+export const createWebpages = async (req, res) => {
+    const { title, content, slug, status } = req.body;
+
+    if (!title || !content || !slug ) {
+        return res.send({status: false, message: "All fields are required"});
+    }
+    try {
+        const existingWebpage = await Webpage.findOne({ slug: slug });
+        if (existingWebpage) {
+            return res.send({status: false, message: "Webpage with this slug already exists"});
+        }
+        const newWebpage = await Webpage.create({
+            title,
+            content,
+            slug,
+            status: status ? true : false,
+        });
+        
+        if (newWebpage) {
+            return res.send({status: true, message: "Webpage created successfully", newWebpage});
+        } else {
+            return res.send({status: false, message: "Failed to create webpage"});
+        }
+    } catch (error) {
+        console.log("Error: ", error);
+    }
+}
+
 export const detailWebpage = async (req, res) => {}
-export const deleteWebpage = async (req, res) => {}
-export const updateWebpage = async (req, res) => {}
+export const deleteWebpage = async (req, res) => {
+
+    const { id } = req.params;
+    console.log(id);
+    try {
+        const deletedWebpage = await Webpage.findByIdAndDelete({ _id: id });
+        if (deletedWebpage) {
+            return res.send({status: true, message: "Webpage deleted successfully"});
+        } else {
+            return res.send({status: false, message: "Webpage not found"});
+        }
+    } catch (error) {
+        console.log("Error: ", error);
+    }
+}
+export const updateWebpage = async (req, res) => {
+    const { id } = req.params;
+    const { title, content, slug, status } = req.body;
+    if (!title || !content || !slug ) {
+        return res.send({status: false, message: "All fields are required"});
+    }
+    try {
+        const updatedWebpage = await Webpage.findByIdAndUpdate(
+            { _id: id },
+            {
+                title,
+                content,
+                slug,
+                status: status ? true : false,
+            },
+            { new: true }
+        );
+        if (updatedWebpage) {
+            return res.send({status: true, message: "Webpage updated successfully", updatedWebpage});
+        } else {
+            return res.send({status: false, message: "Webpage not found"});
+        }
+    } catch (error) {
+        console.log("Error: ", error);
+    }
+}

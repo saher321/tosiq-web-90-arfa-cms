@@ -20,7 +20,7 @@ app.get('/test-server', async (req, res) => {
 dbConnect().then(() => {
     app.listen(PORT, () => {
         console.log(`Server is started http://localhost:${PORT}`)
-    })
+    });
 }).catch((err) => {
     console.log(err)
 })
