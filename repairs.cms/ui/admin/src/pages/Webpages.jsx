@@ -24,7 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from '@/components/ui/checkbox';
-import { LIST_WEBPAGES, CREATE_WEBPAGE, DELETE_WEBPAGE } from '@/resources/server_apis';
+import { LIST_WEBPAGES, CREATE_WEBPAGE, DELETE_WEBPAGE, UPDATE_WEBPAGE } from '@/resources/server_apis';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 
@@ -32,9 +32,9 @@ export default function Webpages() {
 
     const [dynamicPages, setDynamicPages] = useState([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [currentPage, setCurrentPage] = useState(null);
+    const [status, setStatus] = useState(false);
     const [editorContent, setEditorContent] = useState('');
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit, reset, resetField } = useForm();
 
     const pages = [
         {
@@ -78,59 +78,64 @@ export default function Webpages() {
     }, []);
 
     const handleSaveWebpage = async (data) => {
-        const newPage = {
+        const myPage = {
             title: data.title,
             slug: data.slug,
-            status: data.status,
+            status: status, //use state
             content: editorContent,
         };
-
-        if (currentPage) {
-            setDynamicPages(dynamicPages.map(p => p.id === currentPage.id ? { ...newPage, status: currentPage.status } : p));
-        } else {
-            setDynamicPages([...dynamicPages, newPage]);
-        }
+        
         try {
-            const response = await axios.post(CREATE_WEBPAGE, newPage);
-            if (response.data.status == true) {
-                getWebpages();
+            if (data?._id) {
+                const response = await axios.patch(`${UPDATE_WEBPAGE}/${data._id}`, myPage);
+                response.data.status == true ? getWebpages() : console.log("Axios error")
             } else {
-                console.log("Axios error")
+                const response = await axios.post(CREATE_WEBPAGE, myPage);
+                response.data.status == true ? getWebpages() : console.log("Axios error")
             }
+
         } catch (error) {
             console.log("Error: ", error)
         }
-        setIsDialogOpen(false);
-        setCurrentPage(null);
-        setEditorContent('');
+        closeModal();
     };
 
     const handleDelete = async (id) => {
         if (confirm('Are you sure you want to delete this page?')) {
             try {
                 const response = await axios.delete(`${DELETE_WEBPAGE}/${id}`);
-                if (response.data.status == true) {
-                    getWebpages();
-                } else {
-                    console.log("Axios error")
-                }
+                response.data.status == true ? getWebpages() : console.log("Axios error")
             } catch (error) {
                 console.log("Error: ", error)
             }
         }
     };
 
+    const handleStatusChange = (value) => {
+        setStatus(value);
+    };
+
     const openEdit = (page) => {
-        setCurrentPage(page);
-        setEditorContent(page.content || '');
+        reset(page);
         setIsDialogOpen(true);
+        setEditorContent(page.content);
+        setStatus(page.status);
     };
 
     const openAdd = () => {
-        setCurrentPage(null);
-        setEditorContent('');
+        resetField();
+        reset();
+        setEditorContent("");
+        setStatus(false);
         setIsDialogOpen(true);
     };
+    
+    const closeModal = () => {
+        resetField();
+        setEditorContent("");
+        setStatus(false);
+        setIsDialogOpen(false);
+    }
 
     return (
         <div className="space-y-8">
@@ -242,28 +247,28 @@ export default function Webpages() {
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="max-w-3xl">
                     <DialogHeader>
-                        <DialogTitle>{currentPage ? 'Edit Page' : 'Create New Page'}</DialogTitle>
+                        <DialogTitle>Webpage</DialogTitle>
                         <DialogDescription>
-                            {currentPage ? 'Update page details.' : 'Add a new dynamic page to your website.'}
+                            Provide details for the dynamic page to your website.
                         </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleSubmit(handleSaveWebpage)} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="title">Page Title</Label>
-                                <Input id="title" {...register('title')} defaultValue={currentPage?.title} placeholder="e.g. Our Services" required />
+                                <Input id="title" {...register('title')} placeholder="e.g. Our Services" required />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="slug">URL Slug</Label>
                                 <div className="flex items-center gap-2">
                                     <span className="text-muted-foreground text-sm">/</span>
-                                    <Input id="slug" {...register('slug')} defaultValue={currentPage?.slug} placeholder="our-services" required />
+                                    <Input id="slug" {...register('slug')} placeholder="our-services" required />
                                 </div>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="status">Status</Label>
                                 <div className="flex items-center gap-3">
-                                    <Checkbox {...register('status')} id="terms" />
+                                    <Checkbox checked={status} onCheckedChange={handleStatusChange} id="terms" />
                                     <Label htmlFor="terms">Publish webpage now?</Label>
                                 </div>
                             </div>
@@ -282,7 +287,7 @@ export default function Webpages() {
                         </div>
 
                         <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+                            <Button type="button" variant="outline" onClick={closeModal}>Cancel</Button>
                             <Button type="submit">Save Page</Button>
                         </DialogFooter>
                     </form>

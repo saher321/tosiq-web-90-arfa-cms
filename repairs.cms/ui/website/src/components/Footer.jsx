@@ -1,8 +1,32 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Facebook, Instagram, Linkedin, Hexagon } from 'lucide-react'
 import { Button } from "@/components/ui/button"
+import axios from 'axios';
+import { LIST_WEBPAGES } from '../resources/server_apis';
 
 const Footer = () => {
+
+    const [webpages, setWebpages] = useState([]);
+
+    useEffect (() => {
+        const fetchWebpages = async () => {
+            try {
+                const response = await axios.get(LIST_WEBPAGES);
+                console.log('Webpages response:', response.data.webpages);
+                if (response.data.status == true) {
+                    setWebpages(response.data.webpages);
+                } else {
+                    setWebpages([]);
+                }
+            } catch (error) {
+                setWebpages([])
+                console.error('Error fetching webpages:', error);
+            }
+        };
+
+        fetchWebpages();
+    }, [])
+
     return (
         <footer className="w-full py-12 md:py-16 lg:py-20 bg-background border-t border-border/40">
             <div className="container px-4 md:px-6 mx-auto">
@@ -71,9 +95,11 @@ const Footer = () => {
                 <div className="mt-12 pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
                     <p>© 2025 Graphy. All rights reserved.</p>
                     <div className="flex items-center gap-6">
-                        <a href="#" className="hover:text-foreground transition-colors underline underline-offset-4">Privacy Policy</a>
-                        <a href="#" className="hover:text-foreground transition-colors underline underline-offset-4">Terms of Service</a>
-                        <a href="#" className="hover:text-foreground transition-colors underline underline-offset-4">Cookies Settings</a>
+                        {
+                            webpages.map((page) => (
+                                <a key={page.id} href={"#"} className="hover:text-foreground transition-colors underline underline-offset-4">{page.title}</a>
+                            ))
+                        }
                     </div>
                 </div>
             </div>
