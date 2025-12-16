@@ -4,7 +4,7 @@ import { websitePages, websitePageDetails, createWebpages, deleteWebpage, detail
 const webpageRouter = express.Router();
 
 webpageRouter.get('/website/webpages', websitePages);
-webpageRouter.get('/website/webpage/:slug', websitePageDetails);
+webpageRouter.get('/website/webpages/:slug', websitePageDetails);
 
 webpageRouter.get('/webpages', listWebpages);
 webpageRouter.post('/webpages/create', createWebpages);

@@ -3,6 +3,7 @@ import { Facebook, Instagram, Linkedin, Hexagon } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import axios from 'axios';
 import { LIST_WEBPAGES } from '../resources/server_apis';
+import { NavLink } from 'react-router';
 
 const Footer = () => {
 
@@ -96,8 +97,8 @@ const Footer = () => {
                     <p>© 2025 Graphy. All rights reserved.</p>
                     <div className="flex items-center gap-6">
                         {
-                            webpages.map((page) => (
-                                <a key={page.id} href={"#"} className="hover:text-foreground transition-colors underline underline-offset-4">{page.title}</a>
+                            webpages.length > 0 && webpages.map((page) => (
+                                <NavLink key={page.id} to={"/" + page.slug} className="hover:text-foreground transition-colors underline underline-offset-4">{page.title}</NavLink>
                             ))
                         }
                     </div>
