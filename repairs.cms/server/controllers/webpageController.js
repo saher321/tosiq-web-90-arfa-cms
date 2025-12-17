@@ -82,8 +82,9 @@ export const websitePages = async (req, res) => {
 }
 export const websitePageDetails = async (req, res) => {
     const { slug } = req.params;
+    console.log(slug);
     try {
-        const webpage = await Webpage.findOne({ slug: '693fcd8c185835d2f14e2daa', status: true });
+        const webpage = await Webpage.findOne({ slug: slug, status: true });
         if (webpage) {
             return res.send({status: true, message: "Webpage details fetched", webpage});
         } else {

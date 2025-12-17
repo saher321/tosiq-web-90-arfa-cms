@@ -14,13 +14,13 @@ const DynamicWebpage = () => {
     const [page, setPage] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
     useEffect(() => {
         const fetchPage = async () => {
             try {
                 setLoading(true);
                 // Using the DETAIL_WEBPAGE endpoint. Assuming it needs the slug appended.
                 const response = await axios.get(`${DETAIL_WEBPAGE}/${slug}`);
+
                 if (response.data.status == true) {
                     console.log("Fetched page data:", response.data.webpage);
                     setPage(response.data.webpage);

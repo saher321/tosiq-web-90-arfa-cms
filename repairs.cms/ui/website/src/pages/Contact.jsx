@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import WebLayout from '../layouts/WebLayout'
 import { Mail, Phone, MapPin, Send } from 'lucide-react'
 import { Button } from "@/components/ui/button"
@@ -18,8 +18,25 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
+import axios from 'axios'
+import { CONTACTUS_DETAIL } from '../resources/server_apis'
 
 const Contact = () => {
+    const [contactUs, setContactUs] = useState({});
+    useEffect(() => {
+        const fetchContactDetails = async () => {
+            const response = await axios.get(CONTACTUS_DETAIL);
+            if (response.data.status == true) {
+                console.log(response.data.contactUs[0]);
+                setContactUs(response.data.contactUs[0]);
+            } else {
+                setContactUs({});
+                console.error("Failed to fetch contact us details");
+            }
+        }
+        fetchContactDetails();
+    }, []);
+
     const faqs = [
         {
             question: "What appliances do you repair?",
@@ -75,8 +92,7 @@ const Contact = () => {
                                         </div>
                                         <div>
                                             <h3 className="font-semibold text-lg">Email Us</h3>
-                                            <p className="text-muted-foreground">service@repairs.com</p>
-                                            <p className="text-muted-foreground">support@repairs.com</p>
+                                            <p className="text-muted-foreground">{contactUs.email}</p>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -88,8 +104,7 @@ const Contact = () => {
                                         </div>
                                         <div>
                                             <h3 className="font-semibold text-lg">Call Us</h3>
-                                            <p className="text-muted-foreground">+92 300 1234567</p>
-                                            <p className="text-muted-foreground">+92 42 111 222 333</p>
+                                            <p className="text-muted-foreground">{contactUs.phone}</p>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -102,8 +117,7 @@ const Contact = () => {
                                         <div>
                                             <h3 className="font-semibold text-lg">Visit Us</h3>
                                             <p className="text-muted-foreground">
-                                                123 Main Boulevard, Gulberg III,<br />
-                                                Lahore, Pakistan
+                                                {contactUs.address}
                                             </p>
                                         </div>
                                     </CardContent>
@@ -192,9 +206,10 @@ const Contact = () => {
                                     Visit our office in the heart of Lahore.
                                 </p>
                             </div>
+                            { contactUs.map &&
                             <div className="h-[400px] w-full rounded-xl overflow-hidden shadow-lg border border-muted">
                                 <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3399.049686036127!2d74.3436!3d31.5204!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39190483e58107d9%3A0xc20d4713f916b1!2sLahore%2C%20Punjab%2C%20Pakistan!5e0!3m2!1sen!2s!4v1625146000000!5m2!1sen!2s"
+                                    src={contactUs.map}
                                     width="100%"
                                     height="100%"
                                     style={{ border: 0 }}
@@ -203,7 +218,7 @@ const Contact = () => {
                                     referrerPolicy="no-referrer-when-downgrade"
                                     title="Lahore Map"
                                 ></iframe>
-                            </div>
+                            </div> }
                         </div>
                     </div>
                 </div>
