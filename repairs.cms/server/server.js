@@ -3,6 +3,7 @@ import cors from 'cors';
 import { dbConnect } from './config/db.js';
 import webpageRouter from './routes/webpageRoutes.js';
 import contactUsRouter from './routes/contactUsRoutes.js';
+import aboutUsRouter from './routes/aboutUsRoutes.js';
 
 const app = express();
 
@@ -14,6 +15,7 @@ const PREFIX = '/api/v1';
 
 app.use(PREFIX, webpageRouter);
 app.use(PREFIX, contactUsRouter);
+app.use(PREFIX, aboutUsRouter);
 // Hello world
 app.get('/test-server', async (req, res) => {
     return res.send({status: true, message: "Server is running"})
@@ -26,3 +28,11 @@ dbConnect().then(() => {
 }).catch((err) => {
     console.log(err)
 })
+
+// about = {
+//     mission: "To provide the best services.",
+//     vision: "To be the leading company in our field.",
+//     chooseUs: [{slug: "quality-service", title: "Quality Service"},
+//                 {slug: "experienced-team", title: "Experienced Team"},
+//                 {slug: "customer-support", title: "24/7 Customer Support"}]
+// }

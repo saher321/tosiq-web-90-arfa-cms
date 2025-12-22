@@ -5,13 +5,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import { CREATE_ABOUTUS } from '@/resources/server_apis';
 
 export default function About() {
+
+    const { register, handleSubmit, reset } = useForm();
+
     const [features, setFeatures] = useState([
-        { id: 1, text: 'Certified Technicians' },
-        { id: 2, text: 'Same Day Service' },
-        { id: 3, text: '90-Day Warranty on Parts & Labor' },
-        { id: 4, text: 'Transparent Pricing' },
     ]);
 
     const addFeature = () => {
@@ -26,6 +28,21 @@ export default function About() {
         setFeatures(features.map(f => f.id === id ? { ...f, text } : f));
     };
 
+    const handleSaveAbout = async (data) => {
+
+        const newData = {
+            mission: data.mission,
+            vision: data.vision,
+            features: features
+        }
+        
+        try {
+            await axios.post(CREATE_ABOUTUS, newData);            
+        } catch (error) {
+            console.log("Error in axios: ", error)
+        }
+    }
+
     return (
         <div className="space-y-6 max-w-4xl">
             <div>
@@ -34,58 +51,60 @@ export default function About() {
             </div>
 
             <div className="grid gap-6">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Company Overview</CardTitle>
-                        <CardDescription>Define your company's mission and vision.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="mission">Our Mission</Label>
-                            <Textarea
-                                id="mission"
-                                className="min-h-[100px]"
-                                defaultValue="To provide fast, reliable, and affordable appliance repair services to our community. We believe in fixing things rather than throwing them away."
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="vision">Our Vision</Label>
-                            <Textarea
-                                id="vision"
-                                className="min-h-[100px]"
-                                defaultValue="To be the most trusted name in appliance repair, known for our technical expertise and exceptional customer service."
-                            />
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Why Choose Us?</CardTitle>
-                        <CardDescription>List the key benefits of your service.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        {features.map((feature) => (
-                            <div key={feature.id} className="flex gap-2">
-                                <Input
-                                    value={feature.text}
-                                    onChange={(e) => updateFeature(feature.id, e.target.value)}
-                                    placeholder="Feature text"
+                <form onSubmit={handleSubmit(handleSaveAbout)}>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Company Overview</CardTitle>
+                            <CardDescription>Define your company's mission and vision.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="mission">Our Mission</Label>
+                                <Textarea
+                                    id="mission"
+                                    className="min-h-[100px]"
+                                    { ...register("mission") }
                                 />
-                                <Button variant="ghost" size="icon" className="text-destructive" onClick={() => removeFeature(feature.id)}>
-                                    <Trash2 className="w-4 h-4" />
-                                </Button>
                             </div>
-                        ))}
-                        <Button variant="outline" onClick={addFeature} className="w-full">
-                            <Plus className="w-4 h-4 mr-2" /> Add Feature
-                        </Button>
-                    </CardContent>
-                </Card>
+                            <div className="space-y-2">
+                                <Label htmlFor="vision">Our Vision</Label>
+                                <Textarea
+                                    id="vision"
+                                    className="min-h-[100px]"
+                                    { ...register("vision") }
+                                />
+                            </div>
+                        </CardContent>
+                    </Card>
 
-                <div className="flex justify-end">
-                    <Button size="lg">Save Changes</Button>
-                </div>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Why Choose Us?</CardTitle>
+                            <CardDescription>List the key benefits of your service.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            {features.map((feature) => (
+                                <div key={feature.id} className="flex gap-2">
+                                    <Input
+                                        value={feature.text}
+                                        onChange={(e) => updateFeature(feature.id, e.target.value)}
+                                        placeholder="Feature text"
+                                    />
+                                    <Button variant="ghost" size="icon" className="text-destructive" onClick={() => removeFeature(feature.id)}>
+                                        <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                </div>
+                            ))}
+                            <Button variant="outline" onClick={addFeature} className="w-full">
+                                <Plus className="w-4 h-4 mr-2" /> Add Feature
+                            </Button>
+                        </CardContent>
+                    </Card>
+
+                    <div className="flex justify-end">
+                        <Button size="lg">Save Changes</Button>
+                    </div>
+                </form>
             </div>
         </div>
     );
