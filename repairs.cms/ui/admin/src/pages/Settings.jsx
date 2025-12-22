@@ -37,7 +37,7 @@ export default function Settings() {
                     </CardContent>
                 </Card>
 
-                <Card>
+                {/* <Card>
                     <CardHeader>
                         <CardTitle>Notifications</CardTitle>
                         <CardDescription>
@@ -64,7 +64,7 @@ export default function Settings() {
                             <input type="checkbox" className="h-4 w-4 accent-primary" />
                         </div>
                     </CardContent>
-                </Card>
+                </Card> */}
 
                 <WebsiteSettings />
             </div>

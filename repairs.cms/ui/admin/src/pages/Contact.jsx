@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { CONTACTUS_DETAIL, CREATE_CONTACTUS, UPDATE_CONTACTUS } from '@/resources/server_apis';
+import { toast } from 'sonner';
 
 export default function Contact() {
     const { register, handleSubmit, reset } = useForm();
@@ -28,17 +29,19 @@ export default function Contact() {
                 const response = await axios.patch(`${UPDATE_CONTACTUS}/${data._id}`, data);
                 if (response.data.status == true) {
                     reset(response.data.updatedContactUs);
-                    console.log(response.data.updatedContactUs);
+                    toast.success(response.data.message)
                 } else {
                     console.log("Updated: Axios error");
+                    toast.success(response.data.message)
                 }
             } else {
                 const response = await axios.post(CREATE_CONTACTUS, data);
                 if (response.data.status == true) {
                     reset(response.data.newContactUs);
-                    console.log(response.data.newContactUs);
+                    toast.success(response.data.message)
                 } else {
                     console.log("Created: Axios error");
+                    toast.success(response.data.message)
                 }
             }
         } catch (error) {
