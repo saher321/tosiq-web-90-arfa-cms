@@ -54,11 +54,11 @@ export const aboutUs = async (req, res) => { // add || update
 }
 
 // website related controllers fn()
-// export const aboutUsPages = async (req, res) => {
-//     try {
-//         const aboutUs = await AboutUs.find({}).sort({createdAt: -1});
-//         return res.send({status: true, message: "About Us page fetched", aboutUs})
-//     } catch (error) {
-//         console.log("Error: ", error);
-//     }
-// }
+export const aboutUsPage = async (req, res) => {
+    try {
+        const aboutUs = await AboutUs.find({}).sort({createdAt: -1});
+        return res.send({status: true, message: "About Us page fetched", aboutUs})
+    } catch (error) {
+        console.log("Error: ", error);
+    }
+}
