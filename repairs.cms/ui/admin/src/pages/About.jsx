@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,16 +7,35 @@ import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import { CREATE_ABOUTUS } from '@/resources/server_apis';
+import { ABOUTUS_DETAIL, CREATE_ABOUTUS, UPDATE_ABOUTUS } from '@/resources/server_apis';
+import { toast } from 'sonner';
 
 export default function About() {
 
     const { register, handleSubmit, reset } = useForm();
 
-    const [features, setFeatures] = useState([
-    ]);
+    const [features, setFeatures] = useState([]);
 
-    const addFeature = () => {
+    useEffect(() => {
+        const getAbout = async () => {
+            try {
+                const response = await axios.get(ABOUTUS_DETAIL);
+                if (response.data.status == true) {
+                    console.log(response.data.aboutUs[0])
+                    reset(response.data.aboutUs[0]);
+                    response.data.aboutUs[0]?.features && setFeatures(response.data.aboutUs[0]?.features)
+                } else {
+                    toast.error(response.data.message);
+                }
+            } catch (error) {
+                console.log("Error in axios: ", error)
+            }
+        }
+        getAbout();
+    }, []);
+
+    const addFeature = (e) => {
+        e.preventDefault();
         setFeatures([...features, { id: Date.now(), text: '' }]);
     };
 
@@ -29,15 +48,32 @@ export default function About() {
     };
 
     const handleSaveAbout = async (data) => {
-
-        const newData = {
-            mission: data.mission,
-            vision: data.vision,
-            features: features
-        }
+        console.log(data)
         
         try {
-            await axios.post(CREATE_ABOUTUS, newData);            
+            const aboutData = {
+                mission: data.mission,
+                vision: data.vision,
+                features: features
+            }
+            if (data._id) {
+                const response = await axios.patch(`${UPDATE_ABOUTUS}/${data._id}`, aboutData)
+                if (response.data.status == true) {
+                    toast.success(response.data.message);
+                } else {
+                    toast.error(response.data.message);
+                    return;
+                }
+            } else {
+                const response = await axios.post(CREATE_ABOUTUS, aboutData);
+                if (response.data.status == true) {
+                    toast.success(response.data.message);
+                } else {
+                    toast.error(response.data.message);
+                    return;
+                }
+            }
+
         } catch (error) {
             console.log("Error in axios: ", error)
         }
@@ -76,7 +112,7 @@ export default function About() {
                             </div>
                         </CardContent>
                     </Card>
-
+                    <div className='my-5'></div>
                     <Card>
                         <CardHeader>
                             <CardTitle>Why Choose Us?</CardTitle>
@@ -101,7 +137,7 @@ export default function About() {
                         </CardContent>
                     </Card>
 
-                    <div className="flex justify-end">
+                    <div className="my-5 flex justify-end">
                         <Button size="lg">Save Changes</Button>
                     </div>
                 </form>

@@ -17,39 +17,40 @@ export const aboutUs = async (req, res) => { // add || update
     console.log("ID:", id);
     console.log("Req Body:", req.body);
 
-    // try {
-    //     if (id) {
-    //         const existingAboutUs = await AboutUs.findById({ _id: id});
-    //         if (existingAboutUs) {
-    //             const updatedAboutUs = await AboutUs.findByIdAndUpdate( { _id: id }, { mission, vision, features }, { new: true } );
-    //             if (updatedAboutUs) {
-    //                 return res.send({status: true, message: "About Us updated successfully", updatedAboutUs});
-    //             } else {
-    //                 return res.send({status: false, message: "About Us not found"});
-    //             }
-    //         }
-    //     }
+    try {
+        if (id) {
+            const existingAboutUs = await AboutUs.findById({ _id: id});
+            if (existingAboutUs) {
+                console.log(existingAboutUs);
+                const updatedAboutUs = await AboutUs.findByIdAndUpdate( { _id: id }, { mission, vision, features }, { new: true } );
+                if (updatedAboutUs) {
+                    return res.send({status: true, message: "About Us updated successfully", updatedAboutUs});
+                } else {
+                    return res.send({status: false, message: "About Us not found"});
+                }
+            }
+        }
 
         
-    //     // new entery
-    //     if (!mission || !vision || !features) {
-    //         return res.send({status: false, message: "All fields are required"});
-    //     }
+        // new entery
+        if (!mission || !vision || !features) {
+            return res.send({status: false, message: "All fields are required"});
+        }
 
-    //     const newAboutUs = await AboutUs.create({
-    //         mission,
-    //         vision,
-    //         features
-    //     });
+        const newAboutUs = await AboutUs.create({
+            mission,
+            vision,
+            features
+        });
 
-    //     if (newAboutUs) {
-    //         return res.send({status: true, message: "About Us created successfully", newAboutUs});
-    //     } else {
-    //         return res.send({status: false, message: "Failed to save About Us"});
-    //     }
-    // } catch (error) {
-    //     console.log("Error: ", error);
-    // }
+        if (newAboutUs) {
+            return res.send({status: true, message: "About Us created successfully", newAboutUs});
+        } else {
+            return res.send({status: false, message: "Failed to save About Us"});
+        }
+    } catch (error) {
+        console.log("Error: ", error);
+    }
 }
 
 // website related controllers fn()
