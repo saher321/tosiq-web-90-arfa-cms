@@ -25,6 +25,7 @@ const About = () => {
             if (response.data.status == true){
                 setAboutus(response.data.aboutUs[0])
                 setFeatures(response.data.aboutUs[0]?.features)
+                console.log(response.data.aboutUs[0])
             } else {
                 toast.error("Inertnal server error")
                 return;

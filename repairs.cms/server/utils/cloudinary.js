@@ -16,5 +16,10 @@ export const uploadFile = async (file, folderName) => {
 
     if (!result) return null;
 
-    return result;
+    const url = cloudinary.url(result.public_id, {
+        fetch_format: "auto",
+        quality: "auto"
+    })
+
+    return url;
 }

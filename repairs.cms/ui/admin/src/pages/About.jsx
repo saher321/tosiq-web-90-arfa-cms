@@ -23,6 +23,7 @@ export default function About() {
             try {
                 const response = await axios.get(ABOUTUS_DETAIL);
                 if (response.data.status == true) {
+                    console.log(response.data.aboutUs[0])
                     reset(response.data.aboutUs[0]);
                     response.data.aboutUs[0]?.features && setFeatures(response.data.aboutUs[0]?.features)
                 } else {
@@ -36,15 +37,12 @@ export default function About() {
     }, []);
 
     const handlePreviewFile = (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-
-        reader.addEventListener("load", () => {
-            // convert image file to base64 string
-            setPreview(reader.result);
-        });
-        
-        if (file) {
+        if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setPreview(e.target.result);
+            };
             reader.readAsDataURL(file);
         }
     }
@@ -64,12 +62,12 @@ export default function About() {
 
     const handleSaveAbout = async (data) => {
         console.log(data)
-        console.log(preview.trim())
+        
         try {
             const aboutData = {
                 mission: data.mission,
                 vision: data.vision,
-                file: preview.trim(),
+                file: preview,
                 features: features
             }
             if (data._id) {
