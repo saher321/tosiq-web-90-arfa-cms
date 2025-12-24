@@ -14,6 +14,8 @@ export default function About() {
 
     const { register, handleSubmit, reset } = useForm();
 
+    const [preview, setPreview] = useState('');
+
     const [features, setFeatures] = useState([]);
 
     useEffect(() => {
@@ -21,7 +23,6 @@ export default function About() {
             try {
                 const response = await axios.get(ABOUTUS_DETAIL);
                 if (response.data.status == true) {
-                    console.log(response.data.aboutUs[0])
                     reset(response.data.aboutUs[0]);
                     response.data.aboutUs[0]?.features && setFeatures(response.data.aboutUs[0]?.features)
                 } else {
@@ -33,6 +34,20 @@ export default function About() {
         }
         getAbout();
     }, []);
+
+    const handlePreviewFile = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.addEventListener("load", () => {
+            // convert image file to base64 string
+            setPreview(reader.result);
+        });
+        
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
 
     const addFeature = (e) => {
         e.preventDefault();
@@ -49,11 +64,12 @@ export default function About() {
 
     const handleSaveAbout = async (data) => {
         console.log(data)
-        
+        console.log(preview.trim())
         try {
             const aboutData = {
                 mission: data.mission,
                 vision: data.vision,
+                file: preview.trim(),
                 features: features
             }
             if (data._id) {
@@ -109,6 +125,13 @@ export default function About() {
                                     className="min-h-[100px]"
                                     { ...register("vision") }
                                 />
+                            </div>
+                            <div className="space-y-2">
+                                <div className="grid w-full max-w-sm items-center gap-3">
+                                    <Label htmlFor="picture">Right Image</Label>
+                                    <Input id="picture" onChange={handlePreviewFile} type="file" />
+                                </div>
+                                {preview && <img src={preview} className="rounded w-24 h-24" alt="Preview" />}
                             </div>
                         </CardContent>
                     </Card>
