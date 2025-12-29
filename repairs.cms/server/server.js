@@ -4,6 +4,7 @@ import { dbConnect } from './config/db.js';
 import webpageRouter from './routes/webpageRoutes.js';
 import contactUsRouter from './routes/contactUsRoutes.js';
 import aboutUsRouter from './routes/aboutUsRoutes.js';
+import settingsRouter from './routes/settingsRoutes.js';
 
 const app = express();
 
@@ -20,6 +21,8 @@ const PREFIX = '/api/v1';
 app.use(PREFIX, webpageRouter);
 app.use(PREFIX, contactUsRouter);
 app.use(PREFIX, aboutUsRouter);
+app.use(PREFIX, settingsRouter);
+
 // Hello world
 app.get('/test-server', async (req, res) => {
     return res.send({status: true, message: "Server is running"})

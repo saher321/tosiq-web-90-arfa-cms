@@ -99,13 +99,22 @@ function WebsiteSettings() {
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-                <div className="space-y-2">
-                    <Label htmlFor="copyright">Copyright Text</Label>
-                    <Input id="copyright" defaultValue="© 2024 RepairCMS. All rights reserved." />
+                <div className="mb-2">
+                    <Label htmlFor="appname">App name</Label>
+                    <Input id="appname" placeholder="Your application name" />
+                </div>
+                <div className="my-2">
+                    <Label htmlFor="applogo">App Logo</Label>
+                    <Input type="file" id="applogo" />
                 </div>
 
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
+                <div className="my-2">
+                    <Label htmlFor="copyright">Copyright Text</Label>
+                    <Input id="copyright" placeholder="Your copyright text" />
+                </div>
+
+                <div className="my-5">
+                    <div className="my-2 mb-5 flex items-center justify-between">
                         <Label>Social Media Links</Label>
                         <Button variant="outline" size="sm" onClick={addSocial}>Add Link</Button>
                     </div>
