@@ -18,12 +18,27 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import axios from 'axios'
-import { CONTACTUS_DETAIL } from '../resources/server_apis'
+
+import { BOOKING_CREATE, CONTACTUS_DETAIL } from '../resources/server_apis'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 const Contact = () => {
     const [contactUs, setContactUs] = useState({});
     const [faqs, setFAQS] = useState([]);
+    const { register, handleSubmit } = useForm();
+    const [category, setCategory] = useState('');
+
     useEffect(() => {
         const fetchContactDetails = async () => {
             const response = await axios.get(CONTACTUS_DETAIL);
@@ -38,6 +53,35 @@ const Contact = () => {
         }
         fetchContactDetails();
     }, []);
+
+    const handleSubmitBooking = async (data) => {
+        if (!data.firstName || !data.lastName || !data.email || !data.phone || !data.message || !category) {
+            toast.error("Please fill all the fields");
+            return;
+        }
+
+        try {
+
+            const bookingDetails = {
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                phone: data.phone,
+                issue: data.applianceIssue,
+                message: data.message,
+                category: category
+            }
+
+            const response = await axios.post(BOOKING_CREATE, bookingDetails)
+            if (response.data.status == true) {
+                toast.success("Booking created successfully");
+            } else {
+                toast.error("Failed to create booking");
+            }
+        } catch (error) {
+            toast.error("Network error");
+        }
+    }
 
     return (
         <WebLayout>
@@ -117,33 +161,51 @@ const Contact = () => {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <form className="space-y-6">
+                                <form onSubmit={handleSubmit(handleSubmitBooking)} className="space-y-6">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
                                             <Label htmlFor="firstName">First name</Label>
-                                            <Input id="firstName" placeholder="John" />
+                                            <Input {...register('firstName')} id="firstName" placeholder="John" />
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="lastName">Last name</Label>
-                                            <Input id="lastName" placeholder="Doe" />
+                                            <Input {...register('lastName')} id="lastName" placeholder="Doe" />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="email">Email</Label>
-                                        <Input id="email" type="email" placeholder="john@example.com" />
+                                        <Input {...register('email')} id="email" type="email" placeholder="john@example.com" />
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="phone">Phone no#</Label>
-                                        <Input id="phone" type="text" placeholder="+(513) 783 346" />
+                                        <Input {...register('phone')} id="phone" type="text" placeholder="+(513) 783 346" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="phone">Appliance category</Label>
+                                        <Select onValueChange={(e) => setCategory(e)} value={category}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select a category" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectLabel>Categories</SelectLabel>
+                                                    <SelectItem value="ac">AC</SelectItem>
+                                                    <SelectItem value="dryer">Dryer</SelectItem>
+                                                    <SelectItem value="refrigerator">Refrigerator</SelectItem>
+                                                    <SelectItem value="microwave">Microwave</SelectItem>
+                                                    <SelectItem value="oven">Oven</SelectItem>
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="subject">Appliance Issue</Label>
-                                        <Input id="subject" placeholder="e.g., Washing machine not draining" />
+                                        <Input {...register('applianceIssue')} id="subject" placeholder="e.g., Washing machine not draining" />
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="message">Message</Label>
                                         <Textarea
-                                            id="message"
+                                            {...register('message')}
                                             placeholder="Describe the problem in detail..."
                                             className="min-h-[150px]"
                                         />
@@ -189,19 +251,19 @@ const Contact = () => {
                                     Visit our office in the heart of Lahore.
                                 </p>
                             </div>
-                            { contactUs.map &&
-                            <div className="h-[400px] w-full rounded-xl overflow-hidden shadow-lg border border-muted">
-                                <iframe
-                                    src={contactUs.map}
-                                    width="100%"
-                                    height="100%"
-                                    style={{ border: 0 }}
-                                    allowFullScreen=""
-                                    loading="lazy"
-                                    referrerPolicy="no-referrer-when-downgrade"
-                                    title="Lahore Map"
-                                ></iframe>
-                            </div> }
+                            {contactUs.map &&
+                                <div className="h-[400px] w-full rounded-xl overflow-hidden shadow-lg border border-muted">
+                                    <iframe
+                                        src={contactUs.map}
+                                        width="100%"
+                                        height="100%"
+                                        style={{ border: 0 }}
+                                        allowFullScreen=""
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                        title="Lahore Map"
+                                    ></iframe>
+                                </div>}
                         </div>
                     </div>
                 </div>

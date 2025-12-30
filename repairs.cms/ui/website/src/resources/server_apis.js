@@ -10,3 +10,6 @@ export const ABOUTUS_DETAIL = BASE_URL + '/website/aboutus';
 
 // contact us apis
 export const CONTACTUS_DETAIL = BASE_URL + '/website/contactus';
+
+// booking apis
+export const BOOKING_CREATE = BASE_URL + '/website/booking';

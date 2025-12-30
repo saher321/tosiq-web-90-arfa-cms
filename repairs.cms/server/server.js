@@ -5,6 +5,7 @@ import webpageRouter from './routes/webpageRoutes.js';
 import contactUsRouter from './routes/contactUsRoutes.js';
 import aboutUsRouter from './routes/aboutUsRoutes.js';
 import settingsRouter from './routes/settingsRoutes.js';
+import bookingRouter from './routes/bookingRoutes.js';
 
 const app = express();
 
@@ -20,6 +21,7 @@ const PREFIX = '/api/v1';
 
 app.use(PREFIX, webpageRouter);
 app.use(PREFIX, contactUsRouter);
+app.use(PREFIX, bookingRouter);
 app.use(PREFIX, aboutUsRouter);
 app.use(PREFIX, settingsRouter);
 
