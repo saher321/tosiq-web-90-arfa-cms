@@ -18,26 +18,47 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Bug, FilePenLine, Layers2, Mail, Mailbox, Pencil, Phone, User } from 'lucide-react';
+import { Bug, CalendarDays, FilePenLine, Layers2, Mail, Mailbox, Pencil, Phone, User } from 'lucide-react';
 import axios from 'axios';
-import { ALL_BOOKINGS } from '@/resources/server_apis';
+import { ALL_BOOKINGS, UPDATE_BOOKING } from '@/resources/server_apis';
 import moment from 'moment';
+import { toast } from 'sonner';
 
 export default function Booking() {
     const [category, setCategory] = useState('');
     const [bookings, setBookings] = useState([]);
+    const [selectedBooking, setSelectedBooking] = useState(null);
 
+    const fetchBookings = async () => {
+        try {
+            const response = await axios.get(ALL_BOOKINGS);
+            setBookings(response.data.bookings);
+        } catch (error) {
+            console.error('Error fetching bookings:', error);
+        }
+    };
     useEffect(() => {
-        const fetchBookings = async () => {
-            try {
-                const response = await axios.get(ALL_BOOKINGS);
-                setBookings(response.data.bookings);
-            } catch (error) {
-                console.error('Error fetching bookings:', error);
-            }
-        };
         fetchBookings();
     }, []);
+
+
+    const handleBookingStatusChange = async (bookingId, status) => {
+        setSelectedBooking((prev) => ({ ...prev, [bookingId]: status}));
+        // console.log(bookingId,status,selectedBooking);
+
+        try {
+            const response = await axios.patch(UPDATE_BOOKING, { bookingId, status });
+            if (response.data.status == true) {
+                toast.success(response.data.message);
+                await fetchBookings();
+            } else {
+                toast.error(response.data.message);
+            }
+        } catch (error) {
+            console.log("Error: ", error);
+            toast.error("Something went wrong");
+        }
+    }
 
     return (
         <div className="space-y-6">
@@ -69,7 +90,7 @@ export default function Booking() {
                                         <TableRow>
                                             <TableCell className="font-medium">{index + 1}</TableCell>
                                             <TableCell className='w-[150px]'>
-                                                <Select onValueChange={(e) => setCategory(e)} value={category}>
+                                                <Select onValueChange={(e) => handleBookingStatusChange(booking._id, e)} value={booking.status}>
                                                     <SelectTrigger className="w-full">
                                                         <SelectValue placeholder="Select a status" />
                                                     </SelectTrigger>
@@ -98,7 +119,7 @@ export default function Booking() {
                                                     <div className='flex items-center justify-between gap-2'>
                                                         <p className='font-bold text-lg capitalize'> <Layers2 className='inline -mt-1' /> {booking.category}</p>
                                                         <p className='bg-white p-1 text-xs font-bold rounded text-purple-600'>
-                                                            <FilePenLine className='h-4 w-4 inline -mt-1 ml-1 mr-1' /> {booking.createdAt && moment(booking.createdAt).format('llll')}
+                                                            <CalendarDays className='h-4 w-4 inline -mt-1 ml-1 mr-1' /> {booking.createdAt && moment(booking.createdAt).format('llll')}
                                                         </p>
                                                     </div>
                                                     <div className='mt-3'>

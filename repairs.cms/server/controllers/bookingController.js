@@ -36,5 +36,27 @@ export const allBooking = async (req, res) => {
     }
 }
 
-export const updateBooking = async () => {}
+export const updateBooking = async (req, res) => {
+    const booking = req.body;
+    try {
+        const bookingData = await Booking.findById({_id: booking.bookingId});
+        if (!bookingData) return res.send({status: false, message: "Booking was not found or maybe deleted"});
+
+        const updateBooking = await Booking.findByIdAndUpdate({_id: booking.bookingId}, {status: booking.status});
+        if (updateBooking) {
+
+            const subject = `Update: your booking has been ${booking.status}`;
+            const content = `Your booking has been scheduled as ${booking.status}. For further information kindly contact at (+51) 345 678`
+            sendEmail(updateBooking.email, subject, content)
+
+            return res.send({status: true, message: "Booking status has been updated!"});
+        } else {
+            return res.send({status: false, message: "Failed to update booking status"});
+        }
+
+    } catch (error) {
+        console.log("Error: ", error)
+        return res.send({status: false, message: "Network error"});
+    }
+}
 export const deleteBooking = async () => {}
