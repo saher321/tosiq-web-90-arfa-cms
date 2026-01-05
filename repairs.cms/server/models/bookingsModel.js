@@ -1,5 +1,13 @@
 import mongoose from "mongoose";
 
+const bookingStatus = {
+    pending: "pending",
+    confirmed: "confirmed",
+    processing: "processing",
+    completed: "completed",
+    cancelled: "cancelled"
+}
+
 const bookingSchema = new mongoose.Schema({
     firstName: {
         type: String,
@@ -28,6 +36,11 @@ const bookingSchema = new mongoose.Schema({
     category: {
         type: String,
         required: false,
+    },
+    status: {
+        type: String,
+        enum: Object.values(bookingStatus),
+        defaultValue: bookingStatus.pending
     }
 }, { timestamps: true });
 

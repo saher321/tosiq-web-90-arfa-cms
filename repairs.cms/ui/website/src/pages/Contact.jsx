@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import WebLayout from '../layouts/WebLayout'
-import { Mail, Phone, MapPin, Send } from 'lucide-react'
+import { Mail, Phone, MapPin, Send, CheckCircle2Icon } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -27,6 +27,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
 import axios from 'axios'
 
 import { BOOKING_CREATE, CONTACTUS_DETAIL } from '../resources/server_apis'
@@ -36,8 +41,10 @@ import { toast } from 'sonner'
 const Contact = () => {
     const [contactUs, setContactUs] = useState({});
     const [faqs, setFAQS] = useState([]);
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit, reset } = useForm();
+    const [ emailMessage, setEmailMessage ] = useState('')
     const [category, setCategory] = useState('');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchContactDetails = async () => {
@@ -61,7 +68,7 @@ const Contact = () => {
         }
 
         try {
-
+            setLoading(true)
             const bookingDetails = {
                 firstName: data.firstName,
                 lastName: data.lastName,
@@ -74,12 +81,19 @@ const Contact = () => {
 
             const response = await axios.post(BOOKING_CREATE, bookingDetails)
             if (response.data.status == true) {
-                toast.success("Booking created successfully");
+                toast.success(response.data.message);
+                setEmailMessage(response.data?.message);
+                reset();
+                setCategory('');
+                setLoading(false)
             } else {
-                toast.error("Failed to create booking");
+                toast.error(response.data.message);
+                setLoading(false)
             }
         } catch (error) {
+            console.error(error);
             toast.error("Network error");
+            setLoading(false)
         }
     }
 
@@ -155,6 +169,15 @@ const Contact = () => {
                         {/* Contact Form */}
                         <Card className="shadow-lg border-muted/40">
                             <CardHeader>
+                                { emailMessage &&
+                                <Alert>
+                                    <CheckCircle2Icon />
+                                    <AlertTitle>Booking has been submitted successfully</AlertTitle>
+                                    <AlertDescription>
+                                    {emailMessage}
+                                    </AlertDescription>
+                                </Alert>
+                                }
                                 <CardTitle className="text-2xl">Request a Service</CardTitle>
                                 <CardDescription>
                                     Fill out the form below and we'll get back to you to confirm your appointment.
@@ -199,7 +222,7 @@ const Contact = () => {
                                         </Select>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="subject">Appliance Issue</Label>
+                                        <Label htmlFor="subject">Appliance issue</Label>
                                         <Input {...register('applianceIssue')} id="subject" placeholder="e.g., Washing machine not draining" />
                                     </div>
                                     <div className="space-y-2">
@@ -210,7 +233,7 @@ const Contact = () => {
                                             className="min-h-[150px]"
                                         />
                                     </div>
-                                    <Button type="submit" className="w-full md:w-auto">
+                                    <Button type="submit" className="w-full md:w-auto" disabled={loading}>
                                         <Send className="mr-2 h-4 w-4" /> Book Appointment
                                     </Button>
                                 </form>
