@@ -18,14 +18,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Bug, CalendarDays, FilePenLine, Layers2, Mail, Mailbox, Pencil, Phone, User } from 'lucide-react';
+import { Bug, CalendarDays, Layers2, Mail, Mailbox, Pencil, Phone, Trash2, User } from 'lucide-react';
 import axios from 'axios';
-import { ALL_BOOKINGS, UPDATE_BOOKING } from '@/resources/server_apis';
+import { ALL_BOOKINGS, DELETE_BOOKING, UPDATE_BOOKING } from '@/resources/server_apis';
 import moment from 'moment';
 import { toast } from 'sonner';
 
 export default function Booking() {
-    const [category, setCategory] = useState('');
     const [bookings, setBookings] = useState([]);
     const [selectedBooking, setSelectedBooking] = useState(null);
 
@@ -44,10 +43,24 @@ export default function Booking() {
 
     const handleBookingStatusChange = async (bookingId, status) => {
         setSelectedBooking((prev) => ({ ...prev, [bookingId]: status}));
-        // console.log(bookingId,status,selectedBooking);
-
         try {
             const response = await axios.patch(UPDATE_BOOKING, { bookingId, status });
+            if (response.data.status == true) {
+                toast.success(response.data.message);
+                await fetchBookings();
+            } else {
+                toast.error(response.data.message);
+            }
+        } catch (error) {
+            console.log("Error: ", error);
+            toast.error("Something went wrong");
+        }
+    }
+
+    const handleDeleteBooking = async (bookingId) => {
+        if (!window.confirm("Are your sure you want to delete this booking?")) return; // gaurded clause
+        try {
+            const response = await axios.delete(`${DELETE_BOOKING}/${bookingId}`);
             if (response.data.status == true) {
                 toast.success(response.data.message);
                 await fetchBookings();
@@ -77,7 +90,8 @@ export default function Booking() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                <TableHead className="w-[50px]">ID</TableHead>
+                                <TableHead className="w-[30px]">ID</TableHead>
+                                <TableHead className="w-[30px]">&nbsp;</TableHead>
                                 <TableHead>Status</TableHead>
                                 <TableHead>User Details</TableHead>
                                 <TableHead>Appliance Details</TableHead>
@@ -89,6 +103,9 @@ export default function Booking() {
                                     bookings.map((booking, index) => (
                                         <TableRow>
                                             <TableCell className="font-medium">{index + 1}</TableCell>
+                                            <TableCell className="font-medium">
+                                                <Trash2 onClick={() => handleDeleteBooking(booking._id)} className="cursor-pointer w-5 h-5 hover:text-red-500" />
+                                            </TableCell>
                                             <TableCell className='w-[150px]'>
                                                 <Select onValueChange={(e) => handleBookingStatusChange(booking._id, e)} value={booking.status}>
                                                     <SelectTrigger className="w-full">

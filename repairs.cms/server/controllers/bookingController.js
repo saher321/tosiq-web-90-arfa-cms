@@ -59,4 +59,19 @@ export const updateBooking = async (req, res) => {
         return res.send({status: false, message: "Network error"});
     }
 }
-export const deleteBooking = async () => {}
+export const deleteBooking = async (req, res) => {
+    const { bookingId } = req.params;
+    
+    if (!bookingId) return res.send({status: false, message: "Booking id not found!"});
+
+    try {
+        const booking = await Booking.findByIdAndDelete({ _id: bookingId });
+
+        if (!booking) return res.send({ status: false, message: "Booking not found or maybe deleted" });
+
+        return res.send({ status: true, message: "Booking has been deleted" })
+
+    } catch (error) {
+        console.log("Error: ", error);
+    }
+}
