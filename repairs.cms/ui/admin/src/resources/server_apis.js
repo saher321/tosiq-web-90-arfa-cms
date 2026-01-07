@@ -23,3 +23,8 @@ export const CONTACTUS_DETAIL = BASE_URL + '/contactus';
 export const CREATE_CONTACTUS = BASE_URL + '/contactus/create';
 export const UPDATE_CONTACTUS = BASE_URL + '/contactus/update';
 
+// settings apis
+export const SETTINGS_DETAIL = BASE_URL + '/settings';
+export const CREATE_SETTINGS = BASE_URL + '/settings/create';
+export const UPDATE_SETTINGS = BASE_URL + '/settings/update';
+

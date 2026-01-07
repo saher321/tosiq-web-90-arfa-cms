@@ -14,11 +14,13 @@ export const settings = async (req, res) => { // add || update
     const { id } = req.params;
     const { appname, applogo, copyrighttext, sociallinks } = req.body;
 
+    // console.log(req.params, req.body)
+
     try {
         if (id) {
             const existingSettings = await Settings.findById({ _id: id});
             if (existingSettings) {
-                const updatedSettings = await Settings.findByIdAndUpdate( { _id: id }, { appname, applogo, copyrighttext, sociallinks }, { new: true } );
+                const updatedSettings = await Settings.findByIdAndUpdate( { _id: id }, { appname, copyrighttext, sociallinks }, { new: true } );
                 if (updatedSettings) {
                     return res.send({status: true, message: "Settings updated successfully", updatedSettings});
                 } else {
@@ -33,7 +35,7 @@ export const settings = async (req, res) => { // add || update
             return res.send({status: false, message: "All fields are required"});
         }
 
-        const newSettings = await Settings.create({ appname, applogo, copyrighttext, sociallinks });
+        const newSettings = await Settings.create({ appname, copyrighttext, sociallinks });
 
         if (newSettings) {
             return res.send({status: true, message: "Settings created successfully", newSettings});

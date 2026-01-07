@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { Facebook, Instagram, Linkedin, Hexagon } from 'lucide-react'
+import { Facebook, Instagram, Linkedin, Hexagon, Github } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import axios from 'axios';
 import { LIST_WEBPAGES } from '../resources/server_apis';
 import { NavLink } from 'react-router';
 
-const Footer = () => {
+const Footer = ({ websiteData }) => {
 
+    console.log(websiteData)
     const [webpages, setWebpages] = useState([]);
 
     useEffect (() => {
@@ -35,27 +36,24 @@ const Footer = () => {
                     {/* Brand Section */}
                     <div className="flex flex-col gap-4 lg:col-span-1">
                         <div className="flex items-center gap-2">
-                            <div className="bg-primary text-primary-foreground p-1 rounded-md">
-                                <Hexagon className="w-5 h-5 fill-current" />
-                            </div>
-                            <span className="text-xl font-bold tracking-tight">Graphy</span>
+                            { websiteData?.applogo &&
+                                <img src={websiteData?.applogo} alt="" />
+                            }
+                            <span className="text-xl font-bold tracking-tight">{websiteData?.appname}</span>
                         </div>
                         <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
-                            Graphy empowers teams to transform raw data into clear, compelling visuals — making insights easier to share, understand, and act on.
+                            {websiteData?.appname} empowers teams to transform raw data into clear, compelling visuals — making insights easier to share, understand, and act on.
                         </p>
                         <div className="flex items-center gap-4 mt-2">
-                            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                                <Facebook className="w-5 h-5" />
-                                <span className="sr-only">Facebook</span>
-                            </a>
-                            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                                <Instagram className="w-5 h-5" />
-                                <span className="sr-only">Instagram</span>
-                            </a>
-                            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-                                <Linkedin className="w-5 h-5" />
-                                <span className="sr-only">LinkedIn</span>
-                            </a>
+                            {websiteData?.sociallinks?.length > 0 && websiteData?.sociallinks.map((sociallink) => (
+                                <a key={sociallink._id} href={sociallink.url} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">
+                                    {sociallink.platform == "Facebook" && <Facebook className="w-5 h-5" />}
+                                    {sociallink.platform == "Instagram" && <Instagram className="w-5 h-5" />}
+                                    {sociallink.platform == "Linkedin" && <Linkedin className="w-5 h-5" />}
+                                    {sociallink.platform == "Github" && <Github className="w-5 h-5" />}
+                                    <span className="sr-only">{sociallink.platform}</span>
+                                </a>
+                            ))}
                         </div>
                     </div>
 
@@ -94,7 +92,7 @@ const Footer = () => {
 
                 {/* Bottom Section */}
                 <div className="mt-12 pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-                    <p>© 2025 Graphy. All rights reserved.</p>
+                    <p>{websiteData?.copyrighttext}</p>
                     <div className="flex items-center gap-6">
                         {
                             webpages.length > 0 && webpages.map((page) => (

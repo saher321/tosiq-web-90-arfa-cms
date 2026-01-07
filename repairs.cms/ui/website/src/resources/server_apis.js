@@ -13,3 +13,6 @@ export const CONTACTUS_DETAIL   = BASE_URL + '/website/contactus';
 
 // booking apis
 export const BOOKING_CREATE     = BASE_URL + '/website/bookings/create';
+
+// settings apis
+export const SETTINGS_DETAIL    = BASE_URL + '/website/settings';
