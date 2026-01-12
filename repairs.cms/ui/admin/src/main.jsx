@@ -4,10 +4,13 @@ import './index.css'
 import 'react-quill-new/dist/quill.snow.css';
 import App from './App.jsx'
 import { Toaster } from './components/ui/sonner';
+import { AuthProvider } from './AuthContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Toaster position="top-center" duration={3000} richColors />
-    <App />
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </StrictMode>,
 )

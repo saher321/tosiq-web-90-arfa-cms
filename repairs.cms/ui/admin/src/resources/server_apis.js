@@ -1,6 +1,10 @@
 const PREFIX = "/api/v1";
 const BASE_URL = "http://localhost:5000" + PREFIX;
 
+// auth apis
+export const LOGIN_URL = BASE_URL + '/auth/user/login';
+export const VERIFY_USER_URL = BASE_URL + '/auth/user/verify-user';
+
 // webpage apis
 export const LIST_WEBPAGES = BASE_URL + '/webpages';
 export const CREATE_WEBPAGE = BASE_URL + '/webpages/create';

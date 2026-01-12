@@ -9,13 +9,18 @@ import Contact from './pages/Contact';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Booking from './pages/Booking';
+import ProtectedRoute from './ProtectedRoute';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Layout />}>
+        <Route path="/" element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }>
           <Route index element={<Dashboard />} />
           <Route path="webpages" element={<Webpages />} />
           <Route path="home" element={<Home />} />

@@ -1,11 +1,12 @@
 import express from 'express';
-import { login, register } from '../controllers/authController.js';
+import { login, register, verifyUser } from '../controllers/authController.js';
 import Auth from '../models/authModel.js';
 
 const authRoute = express.Router();
 
 authRoute.post('/auth/user/register', register)
 authRoute.post('/auth/user/login', login)
+authRoute.post('/auth/user/verify-user', verifyUser)
 
 // users
 // authRoute.get("/users", async (req, res) => {
