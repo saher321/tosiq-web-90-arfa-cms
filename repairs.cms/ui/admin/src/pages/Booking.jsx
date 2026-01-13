@@ -30,7 +30,11 @@ export default function Booking() {
 
     const fetchBookings = async () => {
         try {
-            const response = await axios.get(ALL_BOOKINGS);
+            const response = await axios.get(ALL_BOOKINGS, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
             setBookings(response.data.bookings);
         } catch (error) {
             console.error('Error fetching bookings:', error);
@@ -99,7 +103,7 @@ export default function Booking() {
                             </TableHeader>
                             <TableBody>
                                 {
-                                    bookings.length > 0 ?
+                                    bookings && bookings.length > 0 ?
                                     bookings.map((booking, index) => (
                                         <TableRow>
                                             <TableCell className="font-medium">{index + 1}</TableCell>
