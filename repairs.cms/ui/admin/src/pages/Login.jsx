@@ -1,22 +1,42 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Loader2, Lock, Mail } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useForm } from "react-hook-form";
+import { toast } from 'sonner';
+import { LOGIN_URL } from '@/resources/server_apis';
+import axios from 'axios';
+import { useAuth } from '@/AuthContext';
 
 export default function Login() {
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const { register, handleSubmit } = useForm();
+    const navigate = useNavigate();
+    const { login } = useAuth();
 
-    async function onSubmit(event) {
-        event.preventDefault();
-        setIsLoading(true);
+    const handleUserLogin = async (data) => {
+        if (!data.email || !data.password) return toast.error("Form fields are required!");
 
-        setTimeout(() => {
+        try {
+            setIsLoading(true);
+            const response = await axios.post(LOGIN_URL, data);
+            if (response.data.status == true) {
+                setIsLoading(false);
+                toast.success(response.data.message);
+                login(response.data.userToken, response.data.user);
+                navigate('/');
+            } else {
+                setIsLoading(false);
+                toast.error(response.data.message);
+            }
+        } catch (error) {
             setIsLoading(false);
-        }, 3000);
+            console.log("Error: ", error);
+            toast.error("Network error!");
+        }
     }
 
     return (
@@ -60,13 +80,14 @@ export default function Login() {
                         </p>
                     </div>
                     <div className="grid gap-6">
-                        <form onSubmit={onSubmit}>
+                        <form onSubmit={handleSubmit(handleUserLogin)}>
                             <div className="grid gap-4">
                                 <div className="grid gap-2">
                                     <Label htmlFor="email">Email</Label>
                                     <div className="relative">
                                         <Mail className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                         <Input
+                                            {...register("email")}
                                             id="email"
                                             placeholder="name@example.com"
                                             type="email"
@@ -83,6 +104,7 @@ export default function Login() {
                                     <div className="relative">
                                         <Lock className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                         <Input
+                                            {...register("password")}
                                             id="password"
                                             placeholder="Password"
                                             type={showPassword ? "text" : "password"}

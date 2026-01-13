@@ -17,17 +17,43 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={
-          <ProtectedRoute>
             <Layout />
-          </ProtectedRoute>
         }>
-          <Route index element={<Dashboard />} />
-          <Route path="webpages" element={<Webpages />} />
-          <Route path="home" element={<Home />} />
-          <Route path="about" element={<About />} />
-          <Route path="booking" element={<Booking />} />
-          <Route path="contact" element={<Contact />} />
-          <Route path="settings" element={<Settings />} />
+          <Route index element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="webpages" element={
+            <ProtectedRoute>
+              <Webpages />
+            </ProtectedRoute>
+          } />
+          <Route path="home" element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          } />
+          <Route path="about" element={
+            <ProtectedRoute>
+              <About />
+            </ProtectedRoute>
+          } />
+          <Route path="booking" element={
+            <ProtectedRoute>
+              <Booking />
+            </ProtectedRoute>
+          } />
+          <Route path="contact" element={
+            <ProtectedRoute>
+              <Contact />
+            </ProtectedRoute>
+          } />
+          <Route path="settings" element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          } />
         </Route>
       </Routes>
     </Router>

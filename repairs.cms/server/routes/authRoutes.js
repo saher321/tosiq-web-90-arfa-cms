@@ -6,7 +6,7 @@ const authRoute = express.Router();
 
 authRoute.post('/auth/user/register', register)
 authRoute.post('/auth/user/login', login)
-authRoute.post('/auth/user/verify-user', verifyUser)
+authRoute.get('/auth/user/verify-user', verifyUser)
 
 // users
 // authRoute.get("/users", async (req, res) => {
