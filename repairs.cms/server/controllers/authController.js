@@ -67,10 +67,10 @@ export const login = async (req, res, next) => {
         <h1>You have successfully loggedin to our system</h1>
         `;
 
-        const userToken = jwt.sign({
-            userId: user?._id,
-            userEmail: user?.email
-        }, process.env.JWT_SECRET, { expiresIn: '7d'})
+        const userToken = jwt.sign(
+            {user: {id: user._id, name: user.name, email: user.email}}, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '7d'})
         
 
         if (userToken) {

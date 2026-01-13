@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useLocation, Outlet } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard,
     LayoutTemplate,
@@ -13,6 +13,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from '@/AuthContext';
+import { toast } from 'sonner';
 
 const navItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -26,6 +28,14 @@ const navItems = [
 
 const Sidebar = ({ className, onClose }) => {
     const location = useLocation();
+    const { logout, user } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate("/login");
+        toast.success("Logged out successfully");
+    };
 
     return (
         <div className={`flex flex-col h-full bg-card border-r ${className}`}>
@@ -61,8 +71,11 @@ const Sidebar = ({ className, onClose }) => {
                         <AvatarFallback>AD</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">Admin User</p>
-                        <p className="text-xs text-muted-foreground truncate">admin@example.com</p>
+                        <p className="text-sm font-medium truncate">{user?.name || "Admin User"}</p>
+                        <p className="text-xs text-muted-foreground truncate">{user?.email || "admin@example.com"}</p>
+                        <Button onClick={handleLogout} variant="ghost" size="icon" className="ml-auto">
+                            Logout
+                        </Button>
                     </div>
                 </div>
             </div>

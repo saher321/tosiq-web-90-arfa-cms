@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Loader2, Lock, Mail } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +26,7 @@ export default function Login() {
             if (response.data.status == true) {
                 setIsLoading(false);
                 toast.success(response.data.message);
-                login(response.data.userToken, response.data.user);
+                await login(response.data.userToken, response.data.user);
                 navigate('/');
             } else {
                 setIsLoading(false);
@@ -162,19 +162,19 @@ export default function Login() {
                     </div>
                     <p className="px-8 text-center text-sm text-muted-foreground">
                         By clicking continue, you agree to our{" "}
-                        <Link
+                        <NavLink
                             to="/terms"
                             className="underline underline-offset-4 hover:text-primary"
                         >
                             Terms of Service
-                        </Link>{" "}
+                        </NavLink>{" "}
                         and{" "}
-                        <Link
+                        <NavLink
                             to="/privacy"
                             className="underline underline-offset-4 hover:text-primary"
                         >
                             Privacy Policy
-                        </Link>
+                        </NavLink>
                         .
                     </p>
                 </div>
