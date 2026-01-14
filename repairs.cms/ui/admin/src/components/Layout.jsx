@@ -67,7 +67,7 @@ const Sidebar = ({ className, onClose }) => {
             <div className="p-4 border-t">
                 <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
                     <Avatar>
-                        <AvatarImage src="https://github.com/shadcn.png" />
+                        <AvatarImage src={`${user?.picture}` || "https://github.com/shadcn.png"} />
                         <AvatarFallback>AD</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
